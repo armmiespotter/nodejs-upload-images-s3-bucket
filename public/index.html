@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+</head>
+
+<body>
+  <h1>Upload Files</h1>
+  <form id="uploadForm" enctype="multipart/form-data" method="POST" action="/upload">
+    <input type="file" name="files" multiple>
+    <button type="submit">Upload</button>
+  </form>
+  <div id="result">
+    <h2>Uploaded File Links</h2>
+    <textarea id="fileLinks" rows="10" cols="50" readonly></textarea>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        // Extract URLs from the result and display in the textarea
+        const fileLinks = result.files.map(file => file.imageUrl).join('\n');
+        const textarea = document.getElementById('fileLinks');
+        textarea.value = fileLinks;
+      } catch (error) {
+        console.error('Error uploading files:', error);
+      }
+    });
+  </script>
+</body>
+
+</html>
